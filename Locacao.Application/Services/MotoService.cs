@@ -1,7 +1,9 @@
 ﻿using Locacao.Domain.Entities;
 using Locacao.Domain.Interfaces.Repository;
 using Locacao.Domain.Interfaces.Service;
+using Locacao.Domain.Models;
 using Locacao.Infra.DTO;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
@@ -22,22 +24,22 @@ namespace Locacao.Application.Services
         public ConnectionFactory Factory { get; set; }
         IConnection connection;
         IChannel channel;
-        public MotoService(IMotoRepository motoRepository)
+        private readonly RabbitMQConfig _config;
+        public MotoService(IMotoRepository motoRepository, IOptions<RabbitMQConfig> config)
         {
             _motoRepository = motoRepository;
+            _config = config.Value;
 
             Factory = new ConnectionFactory { HostName = "localhost" };
             connection = Factory.CreateConnectionAsync().Result;
             channel = connection.CreateChannelAsync().Result;
         }
 
-        public async Task CreateMoto(string ano, string modelo, string placa)
-        {            
-            var moto = new Moto(ano, modelo, placa);
-
+        public async Task CreateMoto(Moto moto)
+        {
             await Task.WhenAll(
                  _motoRepository.Add(moto),
-                 PublishMessage(ano));
+                 PublishMessage(moto.Ano));
         }
 
         public async Task DeleteMoto(long id)
@@ -45,6 +47,11 @@ namespace Locacao.Application.Services
             await _motoRepository.Delete(id);
         }
 
+       
+        public async Task UpdatePlacaMoto(long id, string novaPlaca)
+        {
+            await _motoRepository.UpdatePlacaMoto(id, novaPlaca);
+        }
         public async Task<IEnumerable<Moto>> GetAllMotos()
         {
             return await _motoRepository.GetAll();
@@ -55,10 +62,12 @@ namespace Locacao.Application.Services
             return await _motoRepository.GetByPlaca(placa);
         }
 
-        public async Task UpdatePlacaMoto(long id,string novaPlaca)
-        {      
-           await _motoRepository.UpdatePlacaMoto(id,novaPlaca);              
+
+        public async Task<Moto> GetMotoById(long id)
+        {
+            return await _motoRepository.GetById(id);
         }
+
 
         private async Task PublishMessage(string ano)
         {
@@ -68,5 +77,7 @@ namespace Locacao.Application.Services
             var body = Encoding.UTF8.GetBytes(json);
             await channel.BasicPublishAsync(exchange: "logs", routingKey: string.Empty, body: body);
         }
+
+
     }
 }

@@ -1,6 +1,7 @@
 using Locacao.Application.Services;
 using Locacao.Domain.Interfaces.Repository;
 using Locacao.Domain.Interfaces.Service;
+using Locacao.Domain.Models;
 using Locacao.Infra.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 //Serevices
 builder.Services.AddScoped<IMotoService, MotoService>();
+
+builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection("RabbitMQ"));
 
 var app = builder.Build();
 

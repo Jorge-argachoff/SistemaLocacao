@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Locacao.Domain.Entities
 {
-    public class Locacao:EntidadeBase
+    public class Locadora:EntidadeBase
     {
     }
 }

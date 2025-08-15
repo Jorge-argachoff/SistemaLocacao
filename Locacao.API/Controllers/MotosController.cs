@@ -1,76 +1,71 @@
-﻿using Locacao.Domain.Interfaces.Service;
+﻿using Locacao.Domain.Entities;
+using Locacao.Domain.Interfaces.Repository;
+using Locacao.Domain.Interfaces.Service;
 using Locacao.Infra.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Locacao.API.Controllers
 {
-    public class MotosController : ControllerBase
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MotoController : ControllerBase
     {
         private readonly IMotoService _motoService;
 
-        public MotosController(IMotoService motoService)
+        public MotoController(IMotoService motoService)
         {
             _motoService = motoService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(MotoDTO moto)
+        public async Task<IActionResult> Get()
         {
+            var motos = await _motoService.GetAllMotos();
+            return Ok(motos);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(long id)
+        {
+            if (id <= 0)
+                return NotFound();
+
+            var moto = await _motoService.GetMotoById(id);
+
             if (moto is null)
-                return BadRequest();
+                return NotFound();
 
-            await _motoService.GetAllMotos();
-
-            return Created();
-
+            return Ok(moto);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetByPlaca(string placa)
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] Moto moto)
         {
-            if (string.IsNullOrEmpty(placa))
-                return BadRequest();
-
-            await _motoService.GetMotoByPlaca(placa);
-
-            return Created();
-
+            await _motoService.CreateMoto(moto);
+            return CreatedAtAction(nameof(Get), new { id = moto.Id }, moto);
         }
 
-        
-        [HttpPost]        
-        public async Task<IActionResult> Create(MotoDTO moto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Put(long id, string placa)
         {
-            if (moto is null)
+            if (id <= 0 || string.IsNullOrEmpty(placa))
                 return BadRequest();
 
-            await _motoService.CreateMoto(moto.Ano,moto.Modelo,moto.Placa);
-           
-           return Created();
-            
-        }
-              
-        [HttpPost]       
-        public async Task<IActionResult> Edit(MotoDTO motoDTO)
-        {
-            if (motoDTO is null)
-                return BadRequest();
+            await _motoService.UpdatePlacaMoto(id, placa);
 
-            await _motoService.UpdatePlacaMoto(motoDTO.Id,motoDTO.Placa);
-
-            return Ok();
+            return NoContent();
         }
-                
-        [HttpPost]       
+
+
+
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            if(id <=0)
-                return BadRequest();
-
             await _motoService.DeleteMoto(id);
 
-            return Ok();
+            return NoContent();
         }
     }
+
 }

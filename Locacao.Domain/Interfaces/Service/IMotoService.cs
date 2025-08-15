@@ -9,10 +9,12 @@ namespace Locacao.Domain.Interfaces.Service
 {
     public interface IMotoService
     {
-        Task CreateMoto(string Ano, string modelo,string placa);
+        Task CreateMoto(Moto moto);
         Task DeleteMoto(long id);
         Task UpdatePlacaMoto(long id, string placa);
-        Task<Moto> GetMotoByPlaca(string placa);
         Task<IEnumerable<Moto>> GetAllMotos();
+        Task<Moto> GetMotoByPlaca(string placa);
+        Task<Moto> GetMotoById(long id);
+        
     }
 }

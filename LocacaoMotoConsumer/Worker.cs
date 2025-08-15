@@ -1,5 +1,6 @@
 using Locacao.Domain.Entities;
 using Locacao.Domain.Models;
+using Locacao.Infra.DTO;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -24,12 +25,9 @@ namespace LocacaoMotoConsumer
             _config = config.Value;
             _logger = logger;
             InitializeRabbitMQ();
-            jsonOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.Always,
-                WriteIndented = true
-            };
+            
         }
+
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -43,7 +41,12 @@ namespace LocacaoMotoConsumer
                     var message = Encoding.UTF8.GetString(body);
                     _logger.LogInformation($"Mensagem recebida: {message}");
 
-                    Moto moto = JsonSerializer.Deserialize<Moto>(message, jsonOptions);
+                    MotoDTO moto = JsonSerializer.Deserialize<MotoDTO>(message);
+
+                    if (moto.Ano.Equals("2024"))
+                    {
+                        //TODO salvar evento
+                    }
 
                     _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
                     _logger.LogInformation("Mensagem ACK");

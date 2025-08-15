@@ -6,59 +6,58 @@ using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Channels;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Locacao.Application.Services
 {
-    public class MotoService:IMotoService
+    public class MotoService : IMotoService
     {
-        private readonly IMotoRepository motoRepository;
-        public ConnectionFactory Factory { get;  set; }
+        private readonly IMotoRepository _motoRepository;
+        public ConnectionFactory Factory { get; set; }
         IConnection connection;
         IChannel channel;
         public MotoService(IMotoRepository motoRepository)
         {
-            this.motoRepository = motoRepository;
+            _motoRepository = motoRepository;
 
-            Factory = new ConnectionFactory { HostName = "localhost"};
+            Factory = new ConnectionFactory { HostName = "localhost" };
             connection = Factory.CreateConnectionAsync().Result;
             channel = connection.CreateChannelAsync().Result;
         }
 
         public async Task CreateMoto(string ano, string modelo, string placa)
-        {
-            var moto =  new Moto(ano, modelo, placa);
-            
+        {            
+            var moto = new Moto(ano, modelo, placa);
 
-           await Task.WhenAll(
-                this.motoRepository.Add(moto),
-                PublishMessage(ano)
-
-                );
+            await Task.WhenAll(
+                 _motoRepository.Add(moto),
+                 PublishMessage(ano));
         }
 
-        public Task DeleteMoto()
+        public async Task DeleteMoto(long id)
         {
-            throw new NotImplementedException();
+            await _motoRepository.Delete(id);
         }
 
-        public Task<List<Moto>> GetAllMotos()
+        public async Task<IEnumerable<Moto>> GetAllMotos()
         {
-            throw new NotImplementedException();
+            return await _motoRepository.GetAll();
         }
 
-        public Task<Moto> GetMotos()
+        public async Task<Moto> GetMotoByPlaca(string placa)
         {
-            throw new NotImplementedException();
+            return await _motoRepository.GetByPlaca(placa);
         }
 
-        public Task UpdateMoto()
-        {
-            throw new NotImplementedException();
+        public async Task UpdatePlacaMoto(long id,string novaPlaca)
+        {      
+           await _motoRepository.UpdatePlacaMoto(id,novaPlaca);              
         }
 
         private async Task PublishMessage(string ano)

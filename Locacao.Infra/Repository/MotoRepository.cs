@@ -30,9 +30,26 @@ namespace Locacao.Infra.Repository
             throw new NotImplementedException();
         }
 
+        public Task<Moto> GetByPlaca(string placa)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Update(long id, string placa)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task Update(Moto entity)
         {
             throw new NotImplementedException();
         }
+
+        public Task UpdatePlacaMoto(long motoId, string placa)
+        {
+            throw new NotImplementedException();
+        }
+
+       
     }
 }

@@ -9,6 +9,8 @@ namespace Locacao.Domain.Interfaces.Repository
 {
     public interface IMotoRepository:IRepository<Moto,long>
     {
+        public Task UpdatePlacaMoto(long motoId,string placa);
 
+        public Task<Moto> GetByPlaca(string placa);
     }
 }

@@ -1,83 +1,76 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Locacao.Domain.Interfaces.Service;
+using Locacao.Infra.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Locacao.API.Controllers
 {
-    public class MotosController : Controller
+    public class MotosController : ControllerBase
     {
-        // GET: MotosController
-        public ActionResult Index()
+        private readonly IMotoService _motoService;
+
+        public MotosController(IMotoService motoService)
         {
-            return View();
+            _motoService = motoService;
         }
 
-        // GET: MotosController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<IActionResult> GetAll(MotoDTO moto)
         {
-            return View();
+            if (moto is null)
+                return BadRequest();
+
+            await _motoService.GetAllMotos();
+
+            return Created();
+
         }
 
-        // GET: MotosController/Create
-        public ActionResult Create()
+        [HttpGet]
+        public async Task<IActionResult> GetByPlaca(string placa)
         {
-            return View();
+            if (string.IsNullOrEmpty(placa))
+                return BadRequest();
+
+            await _motoService.GetMotoByPlaca(placa);
+
+            return Created();
+
         }
 
-        // POST: MotosController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        
+        [HttpPost]        
+        public async Task<IActionResult> Create(MotoDTO moto)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+            if (moto is null)
+                return BadRequest();
 
-        // GET: MotosController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
+            await _motoService.CreateMoto(moto.Ano,moto.Modelo,moto.Placa);
+           
+           return Created();
+            
         }
-
-        // POST: MotosController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+              
+        [HttpPost]       
+        public async Task<IActionResult> Edit(MotoDTO motoDTO)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            if (motoDTO is null)
+                return BadRequest();
+
+            await _motoService.UpdatePlacaMoto(motoDTO.Id,motoDTO.Placa);
+
+            return Ok();
         }
-
-        // GET: MotosController/Delete/5
-        public ActionResult Delete(int id)
+                
+        [HttpPost]       
+        public async Task<IActionResult> Delete(long id)
         {
-            return View();
-        }
+            if(id <=0)
+                return BadRequest();
 
-        // POST: MotosController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _motoService.DeleteMoto(id);
+
+            return Ok();
         }
     }
 }

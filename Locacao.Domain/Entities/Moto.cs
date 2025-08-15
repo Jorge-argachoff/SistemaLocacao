@@ -16,10 +16,21 @@ namespace Locacao.Domain.Entities
 
         public Moto(string ano, string modelo, string placa)
         {
+            if (string.IsNullOrEmpty(ano))
+                throw new ArgumentNullException("ano deve ser preenchido");
+
+            if (string.IsNullOrEmpty(modelo))
+                throw new ArgumentNullException("modelo deve ser preenchido");
+
+            if (string.IsNullOrEmpty(placa))
+                throw new ArgumentNullException("placa deve ser preenchida");
+
+
             Ano = ano;
             Modelo = modelo;
             Placa = placa;
         }
+        
 
     }
 }

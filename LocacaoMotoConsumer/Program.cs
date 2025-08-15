@@ -1,4 +1,4 @@
-using Locacao.Domain.Models;
+using Locadora.Domain.Models;
 using LocacaoMotoConsumer;
 
 var host = Host.CreateDefaultBuilder(args)

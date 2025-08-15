@@ -1,6 +1,6 @@
-using Locacao.Domain.Entities;
-using Locacao.Domain.Models;
-using Locacao.Infra.DTO;
+using Locadora.Domain.Entities;
+using Locadora.Domain.Models;
+using Locadora.Infra.DTO;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;

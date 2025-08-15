@@ -2,7 +2,6 @@
 using Locadora.Domain.Interfaces.Repository;
 using Locadora.Domain.Interfaces.Service;
 using Locadora.Domain.Models;
-using Locadora.Infra.DTO;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
 using System;

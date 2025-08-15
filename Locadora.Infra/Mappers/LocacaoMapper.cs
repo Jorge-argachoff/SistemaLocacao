@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace Locadora.Infra.Mappers
 {
-    //public class LocacaoMapper : IEntityTypeConfiguration<Locacao>
-    //{
+    public class LocacaoMapper : IEntityTypeConfiguration<Locacao>
+    {
 
-    //    public void Configure(EntityTypeBuilder<Locacao> builder)
-    //    {
-
-
-
-    //        builder.Property(x => x.Id).ValueGeneratedOnAdd();
-
-    //    }
+        public void Configure(EntityTypeBuilder<Locacao> builder)
+        {
 
 
-    //}
+
+            builder.Property(x => x.Id).ValueGeneratedOnAdd();
+
+        }
+
+
+    }
 }

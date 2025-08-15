@@ -8,25 +8,26 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Locacao.Infra.Context
+namespace Locadora.Infra.Context
 {
     public class ApplicationContext : DbContext
     {
         public DbSet<Moto> Motos { get; set; }
         public DbSet<Entregador> Entregadores { get; set; }
-       // public DbSet<loca> Locacoes { get; set; }
+        public DbSet<Locacao> Locacoes { get; set; }
 
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options)
         {
 
         }
 
-        protected override void OnModelCreating(ModelBuilder model)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
-            model.ApplyConfiguration(new EntregadorMapper());
-            model.ApplyConfiguration(new MotoMapper());
-            //model.ApplyConfiguration(new LocacaoMapper());       
+
+            modelBuilder.ApplyConfiguration(new EntregadorMapper());
+            modelBuilder.ApplyConfiguration(new MotoMapper());
+            modelBuilder.ApplyConfiguration(new LocacaoMapper());       
 
 
 

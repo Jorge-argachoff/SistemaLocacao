@@ -2,7 +2,9 @@ using Locadora.Application.Services;
 using Locadora.Domain.Interfaces.Repository;
 using Locadora.Domain.Interfaces.Service;
 using Locadora.Domain.Models;
+using Locadora.Infra.Context;
 using Locadora.Infra.Repository;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +21,9 @@ builder.Services.AddScoped<IMotoRepository, MotoRepository>();
 builder.Services.AddScoped<IMotoService, MotoService>();
 
 builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection("RabbitMQ"));
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

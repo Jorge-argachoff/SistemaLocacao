@@ -15,9 +15,13 @@ namespace Locadora.Infra.Mappers
         public void Configure(EntityTypeBuilder<Entregador> builder)
         {
 
-
-
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
+            builder.HasIndex(x => x.CNPJ).IsUnique();
+            builder.Property(x => x.CNPJ).HasMaxLength(14);
+            builder.Property(x => x.Nome).HasMaxLength(150);
+            builder.Property(x => x.NumeroCNH).HasMaxLength(30);
+            builder.Property(x => x.TipoCNH).HasMaxLength(30);
+
 
         }
 

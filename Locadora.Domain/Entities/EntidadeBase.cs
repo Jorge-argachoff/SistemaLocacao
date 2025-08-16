@@ -10,7 +10,7 @@ namespace Locadora.Domain.Entities
     {
         public long Id { get; set; }
 
-        public DateTime DataCadastro { get; set; }
+        public DateTime DataCadastro { get; set; } 
 
     }
 }

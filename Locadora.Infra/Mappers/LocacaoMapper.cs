@@ -15,8 +15,6 @@ namespace Locadora.Infra.Mappers
         public void Configure(EntityTypeBuilder<Locacao> builder)
         {
 
-
-
             builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         }

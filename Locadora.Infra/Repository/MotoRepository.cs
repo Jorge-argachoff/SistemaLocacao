@@ -1,5 +1,7 @@
 ﻿using Locadora.Domain.Entities;
 using Locadora.Domain.Interfaces.Repository;
+using Locadora.Infra.Context;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,46 +12,60 @@ namespace Locadora.Infra.Repository
 {
     public class MotoRepository : IMotoRepository
     {
+
+        private readonly ApplicationDbContext _context;
+
+        public MotoRepository(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+
         public async Task Add(Moto entity)
         {
-            throw new NotImplementedException();
+            _context.Motos.Add(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task Delete(long id)
+        public async Task Delete(long id)
         {
-            throw new NotImplementedException();
+            var moto = await _context.Motos.FindAsync(id);
+            if (moto != null)
+            {
+                _context.Motos.Remove(moto);
+                await _context.SaveChangesAsync();
+            }
         }
 
-        public Task<IEnumerable<Moto>> GetAll()
+        public async Task<IEnumerable<Moto>> GetAll()
         {
-            throw new NotImplementedException();
+            return await _context.Motos.ToListAsync();
         }
 
-        public Task<Moto> GetById(long id)
+        public async Task<Moto> GetById(long id)
         {
-            throw new NotImplementedException();
+            return await _context.Motos.FindAsync(id);
         }
 
-        public Task<Moto> GetByPlaca(string placa)
+        public async Task<Moto> GetByPlaca(string placa)
         {
-            throw new NotImplementedException();
+            return await _context.Motos.FirstOrDefaultAsync(x=>x.Placa == placa);
         }
 
-        public Task Update(long id, string placa)
+        
+
+        public async Task Update(Moto entity)
         {
-            throw new NotImplementedException();
+            _context.Motos.Update(entity);
+            await _context.SaveChangesAsync();
         }
 
-        public Task Update(Moto entity)
+        public async Task UpdatePlacaMoto(long motoId, string placa)
         {
-            throw new NotImplementedException();
+            await _context.Set<Moto>().Where(e => e.Id == motoId)
+                                .ExecuteUpdateAsync(s => s.SetProperty(e => e.Placa, placa));
         }
 
-        public Task UpdatePlacaMoto(long motoId, string placa)
-        {
-            throw new NotImplementedException();
-        }
 
-       
     }
 }

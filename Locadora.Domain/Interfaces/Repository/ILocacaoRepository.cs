@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Locadora.Domain.Interfaces.Repository
 {
-    public interface IMotoRepository:IRepository<Moto,long>
+    public interface ILocacaoRepository
     {
-        Task UpdatePlacaMoto(long motoId,string placa);
-
-        Task<IEnumerable<Moto>> GetByPlaca(string placa);
+        Task CreateLocacao(Locacao locacao);
+        Task AtualizarLocacao(long id);
+        Task<Locacao> GetById(long id);
     }
 }

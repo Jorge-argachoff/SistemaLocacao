@@ -1,5 +1,6 @@
 ﻿using Locadora.Domain.Entities;
 using Locadora.Domain.Interfaces.Repository;
+using Locadora.Domain.Interfaces.Service;
 using Locadora.Infra.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -39,17 +40,21 @@ namespace Locadora.Infra.Repository
 
         public async Task<IEnumerable<Moto>> GetAll()
         {
-            return await _context.Motos.ToListAsync();
+            
+              var motos =   await _context.Motos.ToListAsync();
+            return motos;
         }
+
+    
 
         public async Task<Moto> GetById(long id)
         {
             return await _context.Motos.FindAsync(id);
         }
 
-        public async Task<Moto> GetByPlaca(string placa)
+        public async Task<IEnumerable<Moto>> GetByPlaca(string placa)
         {
-            return await _context.Motos.FirstOrDefaultAsync(x=>x.Placa == placa);
+            return await _context.Motos.Where(x=>x.Placa.Contains(placa)).ToListAsync();
         }
 
         

@@ -1,83 +1,34 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Locadora.Domain.Entities;
+using Locadora.Domain.Interfaces.Service;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Locacao.API.Controllers
+namespace Locadora.API.Controllers
 {
-    public class LocacaoController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class LocacaoController : ControllerBase
     {
-        // GET: LocacaoController
-        public ActionResult Index()
+        private readonly ILocacaoService _locacaoService;
+
+        public LocacaoController(ILocacaoService locacaoService)
         {
-            return View();
+            _locacaoService = locacaoService;
+
         }
 
-        // GET: LocacaoController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: LocacaoController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: LocacaoController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Post([FromBody] Locacao locacao)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _locacaoService.Create(locacao);
+            return Ok();
         }
 
-        // GET: LocacaoController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpPost("devolucao")]
+        public async Task<IActionResult> Devolucao( long id)
         {
-            return View();
+            await _locacaoService.Devolucao(id);
+            return Ok();
         }
 
-        // POST: LocacaoController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: LocacaoController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: LocacaoController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

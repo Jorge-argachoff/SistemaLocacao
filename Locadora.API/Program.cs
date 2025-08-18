@@ -17,8 +17,12 @@ builder.Services.AddSwaggerGen();
 
 //Repositories
 builder.Services.AddScoped<IMotoRepository, MotoRepository>();
+builder.Services.AddScoped<ILocacaoRepository, LocacaoRepository>();
+builder.Services.AddScoped<IEntregadorRepository, EntregadorRepository>();
 //Serevices
 builder.Services.AddScoped<IMotoService, MotoService>();
+builder.Services.AddScoped<ILocacaoService, LocacaoService>();
+builder.Services.AddScoped<IEntregadorService, EntregadorService>();
 
 builder.Services.Configure<RabbitMQConfig>(builder.Configuration.GetSection("RabbitMQ"));
 

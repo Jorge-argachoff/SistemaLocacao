@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 
 namespace Locadora.Domain.Entities
 {
-    public class EntidadeBase
+    public class Plano:EntidadeBase    
     {
+        public int Dias { get; set; }
+        public decimal ValorDia { get; set; }
+        public string Nome { get; set; }
 
         [JsonIgnore]
-        public long Id { get; set; }
-        [JsonIgnore]
-        public DateTime DataCadastro { get { return DateTime.UtcNow; } set { } }
+        public virtual IEnumerable<Locacao> Locacoes { get; set; }
 
     }
 }

@@ -12,8 +12,8 @@ namespace Locadora.Domain.Interfaces.Service
         Task CreateMoto(Moto moto);
         Task DeleteMoto(long id);
         Task UpdatePlacaMoto(long id, string placa);
-        Task<IEnumerable<Moto>> GetAllMotos();
-        Task<Moto> GetMotoByPlaca(string placa);
+        Task<IEnumerable<Moto>> GetAllMotos(string placa);
+        Task<IEnumerable<Moto>> GetMotoByPlaca(string placa);
         Task<Moto> GetMotoById(long id);
         
     }

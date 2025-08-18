@@ -7,6 +7,7 @@ using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -36,9 +37,12 @@ namespace Locadora.Application.Services
 
         public async Task CreateMoto(Moto moto)
         {
-            await Task.WhenAll(
-                 _motoRepository.Add(moto),
-                 PublishMessage(moto.Ano));
+            await _motoRepository.Add(moto);
+
+            await PublishMessage(moto);
+            //await Task.WhenAll(
+            //     _motoRepository.Add(moto),
+            //     PublishMessage(moto));
         }
 
         public async Task DeleteMoto(long id)
@@ -51,12 +55,15 @@ namespace Locadora.Application.Services
         {
             await _motoRepository.UpdatePlacaMoto(id, novaPlaca);
         }
-        public async Task<IEnumerable<Moto>> GetAllMotos()
-        {
-            return await _motoRepository.GetAll();
+        public async Task<IEnumerable<Moto>> GetAllMotos(string placa)
+        {   
+            if(string.IsNullOrEmpty(placa))
+                return await _motoRepository.GetAll();
+
+            return await _motoRepository.GetByPlaca(placa);
         }
 
-        public async Task<Moto> GetMotoByPlaca(string placa)
+        public async Task<IEnumerable<Moto>> GetMotoByPlaca(string placa)
         {
             return await _motoRepository.GetByPlaca(placa);
         }
@@ -68,13 +75,12 @@ namespace Locadora.Application.Services
         }
 
 
-        private async Task PublishMessage(string ano)
+        private async Task PublishMessage(Moto moto)
         {
-            await channel.QueueDeclareAsync(queue: "moto-ano", durable: false, exclusive: false, autoDelete: false,
-                                                arguments: null);
-            var json = JsonSerializer.Serialize(ano);
+            await channel.ExchangeDeclareAsync(exchange: _config.ExchangeName, type: ExchangeType.Direct);
+            var json = JsonSerializer.Serialize(moto);
             var body = Encoding.UTF8.GetBytes(json);
-            await channel.BasicPublishAsync(exchange: "logs", routingKey: string.Empty, body: body);
+            await channel.BasicPublishAsync(exchange: _config.ExchangeName, routingKey: moto.Ano, body: body);
         }
 
 

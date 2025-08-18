@@ -1,83 +1,60 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Locadora.Domain.Entities;
+using Locadora.Domain.Interfaces.Service;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Locacao.API.Controllers
+namespace Locadora.API.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class EntregadoresController : Controller
     {
-        // GET: EntregadoresController
-        public ActionResult Index()
+        private readonly IEntregadorService _entregadorService;
+
+        public EntregadoresController(IEntregadorService entregadorService)
         {
-            return View();
+            _entregadorService = entregadorService;
         }
 
-        // GET: EntregadoresController/Details/5
-        public ActionResult Details(int id)
+
+        [HttpGet]
+
+        public async Task<IActionResult> Get()
         {
-            return View();
+            var motos = await _entregadorService.GetAll();
+            return Ok(motos);
         }
 
-        // GET: EntregadoresController/Create
-        public ActionResult Create()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(long id)
         {
-            return View();
+            if (id <= 0)
+                return NotFound();
+
+            var moto = await _entregadorService.GetById(id);
+
+            if (moto is null)
+                return NotFound();
+
+            return Ok(moto);
         }
 
-        // POST: EntregadoresController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<IActionResult> Post([FromBody] Entregador entregador)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            await _entregadorService.Create(entregador);
+            return CreatedAtAction(nameof(Get), new { id = entregador.Id }, entregador);
         }
 
-        // GET: EntregadoresController/Edit/5
-        public ActionResult Edit(int id)
+        
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(long id)
         {
-            return View();
+            await _entregadorService.Delete(id);
+
+            return NoContent();
         }
 
-        // POST: EntregadoresController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EntregadoresController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EntregadoresController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

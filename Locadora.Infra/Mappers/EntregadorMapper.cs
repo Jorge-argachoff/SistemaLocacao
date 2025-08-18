@@ -12,15 +12,16 @@ namespace Locadora.Infra.Mappers
     public class EntregadorMapper : IEntityTypeConfiguration<Entregador>
     {
 
-        public void Configure(EntityTypeBuilder<Entregador> builder)
+        public void Configure(EntityTypeBuilder<Entregador> entity)
         {
+            entity.ToTable("Tb_Entregador");
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+            entity.HasIndex(x => x.CNPJ).IsUnique();
+            entity.Property(x => x.CNPJ).HasMaxLength(14);
+            entity.Property(x => x.Nome).HasMaxLength(150);
+            entity.Property(x => x.NumeroCNH).HasMaxLength(30);
+            entity.Property(x => x.TipoCNH).HasMaxLength(30);
 
-            builder.Property(x => x.Id).ValueGeneratedOnAdd();
-            builder.HasIndex(x => x.CNPJ).IsUnique();
-            builder.Property(x => x.CNPJ).HasMaxLength(14);
-            builder.Property(x => x.Nome).HasMaxLength(150);
-            builder.Property(x => x.NumeroCNH).HasMaxLength(30);
-            builder.Property(x => x.TipoCNH).HasMaxLength(30);
 
 
         }

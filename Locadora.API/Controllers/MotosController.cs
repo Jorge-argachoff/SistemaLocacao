@@ -5,7 +5,7 @@ using Locadora.Infra.DTO;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Locacao.API.Controllers
+namespace Locadora.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -19,9 +19,10 @@ namespace Locacao.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+
+        public async Task<IActionResult> Get(string placa)
         {
-            var motos = await _motoService.GetAllMotos();
+            var motos = await _motoService.GetAllMotos(placa);
             return Ok(motos);
         }
 

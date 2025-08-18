@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -16,6 +17,9 @@ namespace Locadora.Domain.Entities
         public string TipoCNH { get; set; }
         public string ImagemCNH { get; set; }
         public string CaminhoImagemCNH { get; set; }
-        
+
+        [JsonIgnore]
+        public virtual Locacao Locacao { get; set; }
+
     }
 }

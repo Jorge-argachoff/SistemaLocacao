@@ -1,4 +1,5 @@
 using Locadora.Domain.Entities;
+using Locadora.Domain.Interfaces.Repository;
 using Locadora.Domain.Models;
 using Locadora.Infra.DTO;
 using Microsoft.Extensions.Options;
@@ -15,25 +16,28 @@ namespace LocacaoMotoConsumer
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private readonly IEventoRepositorio _eventoRepositorio;
         private IConnection _connection;
         private IChannel _channel;
         private JsonSerializerOptions jsonOptions;
         private readonly RabbitMQConfig _config;
 
-        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config)
+
+        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config, IEventoRepositorio eventoRepositorio)
         {
             _config = config.Value;
             _logger = logger;
-            InitializeRabbitMQ();
+            _eventoRepositorio = eventoRepositorio;
+            InitializeRabbitMQ().Wait();
             
         }
 
 
-        protected override Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
 
-            consumer.ReceivedAsync += (model, ea) =>
+            consumer.ReceivedAsync += async (model, ea) =>
             {
                 try
                 {
@@ -41,14 +45,15 @@ namespace LocacaoMotoConsumer
                     var message = Encoding.UTF8.GetString(body);
                     _logger.LogInformation($"Mensagem recebida: {message}");
 
-                    MotoDTO moto = JsonSerializer.Deserialize<MotoDTO>(message);
+                    MotoDTO dto = JsonSerializer.Deserialize<MotoDTO>(message);
 
-                    if (moto.Ano.Equals("2024"))
+                    if (dto is not null)
                     {
-                        //TODO salvar evento
+                        await _eventoRepositorio.Insert(new Eventos { Payload = message,DataCadastro = DateTime.Now});
+
                     }
 
-                    _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
+                    await _channel.BasicAckAsync(deliveryTag: ea.DeliveryTag, multiple: false);
                     _logger.LogInformation("Mensagem ACK");
                 }
                 catch (Exception ex)
@@ -56,18 +61,16 @@ namespace LocacaoMotoConsumer
                     _logger.LogError(ex, "Erro ao processar mensagem");
 
                     // NACK permite reenviar ou descartar
-                     _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
+                    await _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
                     _logger.LogWarning("Mensagem NACK - será reenviada");
                 }
-
-                return Task.CompletedTask;
+               
             };
 
-            _channel.BasicConsumeAsync(queue: _config.QueueName,
+            await _channel.BasicConsumeAsync(queue: _config.QueueName,
                                   autoAck: false, // use false se quiser controle manual
                                   consumer: consumer);
-
-            return Task.CompletedTask;            
+                      
         }
 
         public override void Dispose()
@@ -77,8 +80,10 @@ namespace LocacaoMotoConsumer
             base.Dispose();
         }
 
-        private void InitializeRabbitMQ()
+        private async  Task InitializeRabbitMQ()
         {
+           
+
             var factory = new ConnectionFactory()
             {
                 HostName = _config.Host,
@@ -86,14 +91,18 @@ namespace LocacaoMotoConsumer
                 Password = _config.Password
             };
 
-            _connection = factory.CreateConnectionAsync().Result;
-            _channel = _connection.CreateChannelAsync().Result;
+            _connection = await factory.CreateConnectionAsync();
+            _channel = await _connection.CreateChannelAsync();
 
-            _channel.QueueDeclareAsync(queue: _config.QueueName,
-                                  durable: true,
-                                  exclusive: false,
-                                  autoDelete: false,
-                                  arguments: null);
+            await _channel.ExchangeDeclareAsync(exchange: _config.ExchangeName, type: ExchangeType.Direct);
+
+          
+          string[] listaRouting = _config.RoutingKey.Split(",");
+
+            foreach (string? severity in listaRouting)
+            {
+                await _channel.QueueBindAsync(queue: _config.QueueName, exchange: _config.ExchangeName, routingKey: severity);
+            }
 
             _logger.LogInformation("Conectado ao RabbitMQ e aguardando mensagens...");
         }

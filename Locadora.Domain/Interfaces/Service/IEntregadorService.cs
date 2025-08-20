@@ -1,4 +1,5 @@
 ﻿using Locadora.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace Locadora.Domain.Interfaces.Service
         Task<Entregador> GetById(long id); 
         Task Create(Entregador entregador);
         Task Delete(long id);
+        Task Upload(IFormFile image,long id);
     }
 }

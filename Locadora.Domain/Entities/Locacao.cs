@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Locadora.Domain.Entities
 {
-    public class Locacao:EntidadeBase
+    public class Locacao : EntidadeBase
     {
         public Locacao()
         {
-              DataInicio = DateTime.UtcNow.AddDays(1);
+            DataInicio = DateTime.UtcNow.AddDays(1);
         }
 
         [JsonIgnore]
@@ -21,42 +21,61 @@ namespace Locadora.Domain.Entities
         public DateTime? DataTermino { get; set; }
 
         public DateTime DataPrevisaoTermino { get; set; }
+        public decimal ValorTotal { get; set; }
 
         [JsonIgnore]
-        public virtual Entregador Entregador { get;set; }
-        
+        public virtual Entregador Entregador { get; set; }
+
         public long EntregadorId { get; set; }
         [JsonIgnore]
-        public virtual Moto Moto { get;set; }
+        public virtual Moto Moto { get; set; }
 
         public long PlanoId { get; set; } // Chave estrangeira
-        
+
         [JsonIgnore]
         public Plano Plano { get; set; }
 
         public long MotoId { get; set; }
 
-        public decimal CalcularValor()
+        public dynamic CalcularValor()
         {
 
-            TimeSpan diferenca = DataInicio - DataTermino.Value;
-            decimal valor = 0;
-           
-                // <= 7:
-                //    valor = diferenca.Days * 30;
-                //case <= 15:
-                //    return diferenca.Days * 28;
-                //case <= 30:
-                //    return diferenca.Days * 22;
-                //case <= 45:
-                //    return diferenca.Days * 20;
-                //case <= 50:
-                //    return diferenca.Days * 18;
+            TimeSpan diferenca =  DataTermino.Value - DataInicio;
+            TimeSpan diferencaPrevisao =   DataPrevisaoTermino - DataTermino.Value;
+            decimal valorTotal = 0;
+            decimal valorDiarias = 0;
+            decimal valorMultaDiarias = 0;
 
-                //default:
-                    return 0;
-            
-           
+            if (PrevisaoCorreta())
+            {
+                valorTotal = diferenca.Days * Plano.ValorDia;
+            }
+            else
+            {
+                switch (Plano.Id)
+                {
+                    case (long)PlanosEnum.Plano7:
+                        valorDiarias = diferenca.Days * Plano.ValorDia;
+                        valorMultaDiarias = ((Plano.ValorDia * 20) / 100);
+                        valorTotal = valorDiarias + (valorMultaDiarias * diferencaPrevisao.Days);
+                        break;
+                    case (long)PlanosEnum.Plano15:
+                        valorDiarias = diferenca.Days * Plano.ValorDia;
+                        valorMultaDiarias = (diferencaPrevisao.Days * 40) / 100;
+                        valorTotal = valorDiarias + valorMultaDiarias;                        
+                        break;
+                    default:
+                        valorTotal = diferenca.Days * Plano.ValorDia;
+                        valorTotal += 50;
+                        break;
+                }
+
+            }
+            return new {ValorTotal = valorTotal,ValorMultaPorDiaria = valorMultaDiarias, ValorDiarias = valorDiarias};
+             
+
         }
+
+        public bool PrevisaoCorreta() => DataTermino.Value.Day == DataPrevisaoTermino.Day;
     }
 }

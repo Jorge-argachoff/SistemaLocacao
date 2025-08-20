@@ -11,6 +11,7 @@ namespace Locadora.Domain
         Plano7 = 1,
         Plano15 = 2,
         Plano30 = 3,
-        Plano50 = 4,
+        Plano45 = 4,
+        Plano50 = 5,
     }
 }

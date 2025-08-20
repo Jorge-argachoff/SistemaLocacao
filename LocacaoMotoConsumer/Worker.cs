@@ -3,6 +3,7 @@ using Locadora.Domain.Interfaces.Repository;
 using Locadora.Domain.Models;
 using Locadora.Infra.DTO;
 using Microsoft.Extensions.Options;
+using Npgsql;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Data.Common;
@@ -21,13 +22,14 @@ namespace LocacaoMotoConsumer
         private IChannel _channel;
         private JsonSerializerOptions jsonOptions;
         private readonly RabbitMQConfig _config;
+        private readonly EventoRepository _repository;
 
 
-        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config, IEventoRepositorio eventoRepositorio)
+        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config,IConfiguration configuration )
         {
             _config = config.Value;
-            _logger = logger;
-            _eventoRepositorio = eventoRepositorio;
+            _repository = new EventoRepository(configuration);
+            _logger = logger;           
             InitializeRabbitMQ().Wait();
             
         }
@@ -45,11 +47,15 @@ namespace LocacaoMotoConsumer
                     var message = Encoding.UTF8.GetString(body);
                     _logger.LogInformation($"Mensagem recebida: {message}");
 
-                    MotoDTO dto = JsonSerializer.Deserialize<MotoDTO>(message);
+                   
 
-                    if (dto is not null)
+                    if (!string.IsNullOrEmpty(message))
                     {
-                        await _eventoRepositorio.Insert(new Eventos { Payload = message,DataCadastro = DateTime.Now});
+                        await _repository.InsertAsync(new Eventos
+                        {
+                            DataCadastro = DateTime.UtcNow,
+                            Payload = message
+                        });
 
                     }
 

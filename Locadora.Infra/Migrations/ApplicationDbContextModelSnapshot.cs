@@ -114,6 +114,9 @@ namespace Locadora.Infra.Migrations
                     b.Property<long>("PlanoId")
                         .HasColumnType("bigint");
 
+                    b.Property<decimal>("ValorTotal")
+                        .HasColumnType("numeric");
+
                     b.HasKey("Id");
 
                     b.HasIndex("EntregadorId")
@@ -166,9 +169,6 @@ namespace Locadora.Infra.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("Dias")
                         .HasColumnType("integer");
 
@@ -186,7 +186,6 @@ namespace Locadora.Infra.Migrations
                         new
                         {
                             Id = 1L,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dias = 7,
                             Nome = "Plano 7",
                             ValorDia = 30.00m
@@ -194,7 +193,6 @@ namespace Locadora.Infra.Migrations
                         new
                         {
                             Id = 2L,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dias = 15,
                             Nome = "Plano 15",
                             ValorDia = 28.00m
@@ -202,7 +200,6 @@ namespace Locadora.Infra.Migrations
                         new
                         {
                             Id = 3L,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dias = 30,
                             Nome = "Plano 30",
                             ValorDia = 22.00m
@@ -210,7 +207,6 @@ namespace Locadora.Infra.Migrations
                         new
                         {
                             Id = 4L,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dias = 45,
                             Nome = "Plano 45",
                             ValorDia = 20.00m
@@ -218,7 +214,6 @@ namespace Locadora.Infra.Migrations
                         new
                         {
                             Id = 5L,
-                            DataCadastro = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Dias = 50,
                             Nome = "Plano 50",
                             ValorDia = 18.00m

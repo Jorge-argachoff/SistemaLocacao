@@ -18,7 +18,6 @@ namespace Locadora.API.Controllers
 
 
         [HttpGet]
-
         public async Task<IActionResult> Get()
         {
             var motos = await _entregadorService.GetAll();
@@ -46,7 +45,13 @@ namespace Locadora.API.Controllers
             return CreatedAtAction(nameof(Get), new { id = entregador.Id }, entregador);
         }
 
-        
+        [HttpPut("upload")]
+        public async Task<IActionResult> Upload(IFormFile imagemCNH,long id)
+        {
+            await _entregadorService.Upload(imagemCNH,id);
+            return Ok();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)

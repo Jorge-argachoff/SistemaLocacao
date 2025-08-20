@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Locadora.Application.Services
@@ -23,15 +25,34 @@ namespace Locadora.Application.Services
             await _locacaoRepository.CreateLocacao(locacao);
         }
 
-        public async Task<decimal> Devolucao(long id)
+        public Task<decimal> FinishFinishLocacao(long id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<string> FinishLocacao(long id)
         {
             await _locacaoRepository.AtualizarLocacao(id);
 
             var locacao = await _locacaoRepository.GetById(id);
 
-            return locacao.CalcularValor();
+            var previa = locacao.CalcularValor();
 
-
+            return JsonSerializer.Serialize(previa);
         }
+
+        public async Task<string> GetLocacao(long id)
+        {
+            var locacao = await _locacaoRepository.GetById(id);
+
+            if (locacao is not null)
+                locacao.DataTermino = DateTime.UtcNow;
+
+            var previa = locacao.CalcularValor();
+
+            return JsonSerializer.Serialize(previa);
+        }
+
+
     }
 }

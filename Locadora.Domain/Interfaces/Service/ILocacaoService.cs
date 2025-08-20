@@ -10,7 +10,8 @@ namespace Locadora.Domain.Interfaces.Service
     public interface ILocacaoService
     {
         Task Create(Locacao moto);
-        Task<decimal> Devolucao(long id);
+        Task<string> FinishLocacao(long id);
+        Task<string> GetLocacao(long id);
        
         
     }

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Locadora.Domain.Entities
 {
-    public class Plano:EntidadeBase    
+    public class Plano
     {
+        public long Id { get; set; }
         public int Dias { get; set; }
         public decimal ValorDia { get; set; }
         public string Nome { get; set; }

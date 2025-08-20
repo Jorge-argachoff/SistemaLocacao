@@ -20,7 +20,7 @@ namespace Locadora.Infra.Repository
         public async Task Insert(Eventos payload)
         {
            await _context.Eventos.AddAsync(payload);
-            await _context.SaveChangesAsync();
+           await _context.SaveChangesAsync();
         }
     }
 }

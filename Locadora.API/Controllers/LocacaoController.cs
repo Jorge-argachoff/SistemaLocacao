@@ -26,8 +26,16 @@ namespace Locadora.API.Controllers
         [HttpPost("devolucao")]
         public async Task<IActionResult> Devolucao( long id)
         {
-            await _locacaoService.Devolucao(id);
+            await _locacaoService.FinishLocacao(id);
             return Ok();
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Previsao(long id)
+        {
+            var json = await _locacaoService.GetLocacao(id);
+            return Ok(json);
         }
 
     }

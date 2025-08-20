@@ -31,9 +31,9 @@ namespace Locadora.Infra.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async   Task<Locacao> GetById(long id)
+        public async Task<Locacao> GetById(long id)
         {
-            return await _context.Locacoes.FindAsync(id);
+            return await _context.Locacoes.Include(p=>p.Plano).FirstOrDefaultAsync(x=>x.Id == id);
         }
     }
 }

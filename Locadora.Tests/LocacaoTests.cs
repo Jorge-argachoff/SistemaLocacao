@@ -43,5 +43,25 @@ namespace Locadora.Tests
             // Assert
             Assert.False(result);
         }
+
+        [Fact]
+        public void DeveRetornarFalse_QuandoDataPrevisaoOuInicioForMenorQueDataAtual()
+        {
+            // Arrange
+            var locacao = new Locacao
+            {
+                DataCadastro = new DateTime(2025, 08, 14),
+                DataInicio = new DateTime(2025, 08, 15),
+                DataTermino = new DateTime(2025, 08, 21),
+                DataPrevisaoTermino = new DateTime(2025, 08, 18),
+                Plano = new Plano { Id = 1, ValorDia = 30.00m, Dias = 7, Nome = "Plano 7" }
+            };
+
+            // Act
+            var result = locacao.ValidarDataMenorQueDataAtual();
+
+            // Assert
+            Assert.False(result);
+        }
     }
 }

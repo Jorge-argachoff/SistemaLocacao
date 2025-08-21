@@ -39,9 +39,9 @@ namespace Locadora.Domain.Entities
 
         public dynamic CalcularValor()
         {
-
-            TimeSpan diferenca =  DataTermino.Value - DataInicio;
-            TimeSpan diferencaPrevisao =   DataPrevisaoTermino - DataTermino.Value;
+            
+            TimeSpan diferenca = DataTermino.Value - DataInicio;
+            TimeSpan diferencaPrevisao = DataPrevisaoTermino - DataTermino.Value;
             decimal valorTotal = 0;
             decimal valorDiarias = 0;
             decimal valorMultaDiarias = 0;
@@ -62,7 +62,7 @@ namespace Locadora.Domain.Entities
                     case (long)PlanosEnum.Plano15:
                         valorDiarias = diferenca.Days * Plano.ValorDia;
                         valorMultaDiarias = (diferencaPrevisao.Days * 40) / 100;
-                        valorTotal = valorDiarias + valorMultaDiarias;                        
+                        valorTotal = valorDiarias + valorMultaDiarias;
                         break;
                     default:
                         valorTotal = diferenca.Days * Plano.ValorDia;
@@ -71,11 +71,20 @@ namespace Locadora.Domain.Entities
                 }
 
             }
-            return new {ValorTotal = valorTotal,ValorMultaPorDiaria = valorMultaDiarias, ValorDiarias = valorDiarias};
-             
+            return new { ValorTotal = valorTotal, ValorMultaPorDiaria = valorMultaDiarias, ValorDiarias = valorDiarias };
+
 
         }
 
         public bool PrevisaoCorreta() => DataTermino.Value.Day == DataPrevisaoTermino.Day;
+        public bool ValidarDataMenorQueDataAtual()  {
+            if(DataPrevisaoTermino.Day <= DateTime.UtcNow.Day)
+                return false;
+
+            if(DataInicio.Day <= DateTime.UtcNow.Day)
+                return false;
+
+            return true;
+        }
     }
 }

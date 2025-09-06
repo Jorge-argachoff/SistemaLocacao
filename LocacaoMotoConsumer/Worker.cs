@@ -26,13 +26,15 @@ namespace LocacaoMotoConsumer
             _config = config.Value;
             _repository = new EventoRepository(configuration);
             _logger = logger;           
-            InitializeRabbitMQ().Wait();
+            
         }
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            await InitializeRabbitMQ();
 
             consumer.ReceivedAsync += async (model, ea) =>
             {

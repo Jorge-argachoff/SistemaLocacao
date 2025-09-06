@@ -22,14 +22,15 @@ namespace WorkerMotoConsumerOutrosAnos
         {
             _config = config.Value;
             
-            _logger = logger;
-            InitializeRabbitMQ().Wait();
+            _logger = logger;          
         }
 
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
+
+            await InitializeRabbitMQ();
 
             consumer.ReceivedAsync += async (model, ea) =>
             {

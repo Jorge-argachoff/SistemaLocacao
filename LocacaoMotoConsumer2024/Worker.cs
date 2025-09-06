@@ -6,14 +6,13 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Channels;
 
 namespace LocacaoMotoConsumer
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-       
+        private readonly IEventoRepositorio _eventoRepositorio;
         private IConnection _connection;
         private IChannel _channel;
         private JsonSerializerOptions jsonOptions;
@@ -21,11 +20,11 @@ namespace LocacaoMotoConsumer
         private readonly EventoRepository _repository;
 
 
-        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config,IConfiguration configuration )
+        public Worker(ILogger<Worker> logger, IOptions<RabbitMQConfig> config, IConfiguration configuration)
         {
             _config = config.Value;
             _repository = new EventoRepository(configuration);
-            _logger = logger;           
+            _logger = logger;
             InitializeRabbitMQ().Wait();
         }
 
@@ -63,13 +62,13 @@ namespace LocacaoMotoConsumer
                     await _channel.BasicNackAsync(deliveryTag: ea.DeliveryTag, multiple: false, requeue: true);
                     _logger.LogWarning("Mensagem NACK - será reenviada");
                 }
-               
+
             };
 
             await _channel.BasicConsumeAsync(queue: _config.QueueName,
                                   autoAck: false, // use false se quiser controle manual
                                   consumer: consumer);
-                      
+
         }
 
         public override void Dispose()
@@ -81,7 +80,7 @@ namespace LocacaoMotoConsumer
 
         private async Task InitializeRabbitMQ()
         {
-           
+
             var factory = new ConnectionFactory()
             {
                 HostName = _config.Host,
@@ -92,12 +91,10 @@ namespace LocacaoMotoConsumer
             _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
-            await _channel.QueueDeclareAsync(queue: _config.QueueName, durable: false, exclusive: false, autoDelete: false);
-
             await _channel.ExchangeDeclareAsync(exchange: _config.ExchangeName, type: ExchangeType.Topic);
 
-          
-          string[] listaRouting = _config.RoutingKey.Split(",");
+
+            string[] listaRouting = _config.RoutingKey.Split(",");
 
             foreach (string? routingKey in listaRouting)
             {

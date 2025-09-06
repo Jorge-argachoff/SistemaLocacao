@@ -77,10 +77,10 @@ namespace Locadora.Application.Services
 
         private async Task PublishMessage(Moto moto)
         {
-            await channel.ExchangeDeclareAsync(exchange: _config.ExchangeName, type: ExchangeType.Direct);
+            await channel.ExchangeDeclareAsync(exchange: _config.ExchangeName, type: ExchangeType.Topic);
             var json = JsonSerializer.Serialize(moto);
             var body = Encoding.UTF8.GetBytes(json);
-            await channel.BasicPublishAsync(exchange: _config.ExchangeName, routingKey: moto.Ano, body: body);
+            await channel.BasicPublishAsync(exchange: _config.ExchangeName, routingKey: $"ano.{moto.Ano}", body: body);
         }
 
 

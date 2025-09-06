@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Locadora.Infra", "Locadora.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Locadora.Tests", "Locadora.Tests\Locadora.Tests.csproj", "{D9F8AA04-2E71-4BC9-B87E-E101811E915E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerMotoConsumerOutrosAnos", "WorkerMotoConsumerOutrosAnos\WorkerMotoConsumerOutrosAnos.csproj", "{E8A4D497-B038-4CA1-9EFF-62E8743F032F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{D9F8AA04-2E71-4BC9-B87E-E101811E915E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9F8AA04-2E71-4BC9-B87E-E101811E915E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9F8AA04-2E71-4BC9-B87E-E101811E915E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A4D497-B038-4CA1-9EFF-62E8743F032F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A4D497-B038-4CA1-9EFF-62E8743F032F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A4D497-B038-4CA1-9EFF-62E8743F032F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A4D497-B038-4CA1-9EFF-62E8743F032F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
